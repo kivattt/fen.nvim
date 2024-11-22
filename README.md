@@ -6,10 +6,10 @@ local fen = require("fen")
 vim.keymap.set("n", "<Leader>f", fen.show)
 ```
 
-Configuration
+Optional configuration, defaults:
 ```lua
 local fen = require("fen")
 fen.setup({
-    border = "single"
+    border = "rounded" -- See: https://neovim.io/doc/user/api.html#:~:text=border%3A
 })
 ```
