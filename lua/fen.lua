@@ -6,9 +6,7 @@ function M.setup(options)
 	border = options.border or "rounded"
 end
 
-function M.show(opts)
-	opts = opts or {}
-
+function M.show()
 	local currentBufName = vim.api.nvim_buf_get_name(0)
 	local tempFile = vim.fn.tempname()
 
