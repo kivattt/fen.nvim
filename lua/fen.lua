@@ -1,9 +1,13 @@
 local M = {}
 
+local util = require("fen.util")
+
 local border = "rounded"
+local noWrite = true
 
 function M.setup(options)
 	border = options.border or "rounded"
+	noWrite = options.no_write or true
 end
 
 function M.show()
@@ -27,22 +31,45 @@ function M.show()
 	})
 
 	vim.api.nvim_set_current_win(win)
+	--vim.api.nvim_set_hl(0, 'Terminal', {})
 
-	vim.fn.termopen("fen --print-path-on-open " .. currentBufName .. " > " .. tempFile, {
-		on_exit = function (_, _, _)
-			for line in io.lines(tempFile) do
-				vim.cmd("tabnew " .. line)
-			end
+	if not util.isFenVersionSupported() then
+		vim.cmd("quit")
 
-			os.remove(tempFile)
-
-			if vim.api.nvim_win_is_valid(win) then
-				vim.api_nvim_win_close(win, true)
-			end
+		local version = util.fenVersion()
+		if not util.isFenVersionValid(version) then
+			print("improper fen installation? invalid version text found")
+		else
+			print("fen version v" .. util.fenVersion() .. " is too old!")
 		end
-	})
+	else
+		vim.cmd.startinsert()
+		local noWriteArg = "--no-write"
+		if not noWrite then
+			noWriteArg = ""
+		end
+		vim.fn.termopen("fen " .. noWriteArg .. " --close-on-escape --terminal-title=false --print-path-on-open " .. currentBufName .. " > " .. tempFile, {
+			on_exit = function (_, exitCode, _)
+				vim.cmd("quit")
 
-	vim.cmd.startinsert()
+				if exitCode ~= 0 then
+					print("fen closed with a non-zero exit code")
+					os.remove(tempFile)
+					return
+				end
+
+				for line in io.lines(tempFile) do
+					vim.cmd("tabnew " .. line)
+				end
+
+				os.remove(tempFile)
+
+				if vim.api.nvim_win_is_valid(win) then
+					vim.api_nvim_win_close(win, true)
+				end
+			end
+		})
+	end
 end
 
 return M
