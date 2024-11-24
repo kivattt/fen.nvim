@@ -23,5 +23,6 @@ fen.setup({
 ```
 
 ## TODO
-Disable search highlighting for the fen popup window
-Don't change the terminal title
+Disable search highlighting for the fen popup window\
+Don't change the terminal title\
+Allow setting no\_write to false, right now it does nothing
