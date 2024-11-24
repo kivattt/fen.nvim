@@ -1,6 +1,8 @@
-This NeoVim plugin embeds [fen](https://github.com/kivattt/fen), and lets you open files in new tabs
+This NeoVim plugin embeds [fen](https://github.com/kivattt/fen) file manager, and lets you open files in new tabs
 
 This plugin works with fen v1.7.18 or above
+
+<img src="screenshot.png" alt="Selecting multiple files to open in tabs">
 
 ## Installation
 [vim-plug](https://github.com/junegunn/vim-plug):
