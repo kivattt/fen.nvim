@@ -4,10 +4,12 @@ local util = require("fen.util")
 
 local border = "rounded"
 local disableNoWrite = true
+local title = "FEN"
 
 function M.setup(options)
 	border = options.border or "rounded"
 	disableNoWrite = options.disable_no_write
+	title = options.title or "FEN"
 end
 
 function M.show()
@@ -17,6 +19,12 @@ function M.show()
 	local buf = vim.api.nvim_create_buf(false, true)
 	vim.api.nvim_set_option_value("bufhidden", "wipe", {buf = buf})
 	vim.api.nvim_set_option_value("modifiable", false, {buf = buf})
+	vim.api.nvim_create_autocmd({"TermOpen"}, {
+		buffer = buf,
+		callback = function()
+			vim.api.nvim_buf_set_name(buf, title)
+		end
+	})
 
 	local height = math.ceil(vim.o.lines * 0.8)
 	local width = math.ceil(vim.o.columns * 0.8)
@@ -31,7 +39,6 @@ function M.show()
 	})
 
 	vim.api.nvim_set_current_win(win)
-	--vim.api.nvim_set_hl(0, 'Terminal', {})
 
 	if not util.isFenVersionSupported() then
 		vim.cmd("quit")

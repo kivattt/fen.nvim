@@ -18,10 +18,11 @@ vim.keymap.set("n", "<Leader>f", fen.show)
 local fen = require("fen")
 fen.setup({
     border = "rounded", -- See: https://neovim.io/doc/user/api.html#:~:text=border%3A
+    title = "FEN", -- Terminal title (buffer name)
     disable_no_write = false -- Set this to true to allow deleting or modifying files
 })
 ```
 
 ## TODO
-Disable search highlighting for the fen popup window\
-Don't change the terminal title
+- Disable search highlighting for the fen popup window\
+- Center the popup window
