@@ -24,5 +24,5 @@ fen.setup({
 ```
 
 ## TODO
-- Disable search highlighting for the fen popup window\
+- Disable search highlighting for the fen popup window
 - Center the popup window
