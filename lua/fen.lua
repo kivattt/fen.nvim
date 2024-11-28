@@ -2,14 +2,24 @@ local M = {}
 
 local util = require("fen.util")
 
-local border = "rounded"
-local disableNoWrite = true
-local title = "FEN"
+local defaultBorder = "rounded"
+local defaultTitle = "FEN"
+local defaultHeightMultiplier = 0.8
+local defaultWidthMultiplier = 0.8
+local defaultDisableNoWrite = false
+
+local border = defaultBorder
+local title = defaultTitle
+local heightMultiplier = defaultHeightMultiplier
+local widthMultiplier = defaultWidthMultiplier
+local disableNoWrite = defaultDisableNoWrite
 
 function M.setup(options)
-	border = options.border or "rounded"
+	border = options.border or defaultBorder
+	title = options.title or defaultTitle
+	widthMultiplier = options.width or defaultWidthMultiplier
+	heightMultiplier = options.height or defaultHeightMultiplier
 	disableNoWrite = options.disable_no_write
-	title = options.title or "FEN"
 end
 
 function M.show()
@@ -26,19 +36,54 @@ function M.show()
 		end
 	})
 
-	local height = math.ceil(vim.o.lines * 0.8)
-	local width = math.ceil(vim.o.columns * 0.8)
-	local win = vim.api.nvim_open_win(buf, true, {
-		style = "minimal",
-		relative = "editor",
-		width = width,
-		height = height,
-		row = math.ceil((vim.o.lines) / 2),
-		col = math.ceil((vim.o.columns) / 2),
-		border = border,
+	local win
+	local resizeAutocmdId
+
+	local function open_window()
+		local height = math.floor(vim.o.lines * heightMultiplier)
+		local width = math.floor(vim.o.columns * widthMultiplier)
+
+		local winOpts = {
+			style = "minimal",
+			relative = "editor",
+			width = width,
+			height = height,
+			row = math.floor((vim.o.lines - height) / 2),
+			col = math.floor((vim.o.columns - width) / 2),
+			border = border,
+		}
+
+		if win and vim.api.nvim_win_is_valid(win) then
+			vim.api.nvim_win_set_config(win, winOpts)
+		else
+			win = vim.api.nvim_open_win(buf, true, winOpts)
+			if not win or win == 0 then
+				print("fen.nvim: failed to open window")
+				return
+			end
+		end
+
+		vim.api.nvim_set_current_win(win)
+	end
+
+	open_window()
+
+	resizeAutocmdId = vim.api.nvim_create_autocmd({"VimResized"}, {
+		callback = function ()
+			open_window()
+		end
 	})
 
-	vim.api.nvim_set_current_win(win)
+	local function close_window()
+		if resizeAutocmdId then
+			vim.api.nvim_del_autocmd(resizeAutocmdId)
+			resizeAutocmdId = nil
+		end
+
+		if vim.api.nvim_win_is_valid(win) then
+			vim.api.nvim_win_close(win, true)
+		end
+	end
 
 	if not util.isFenVersionSupported() then
 		vim.cmd("quit")
@@ -55,6 +100,7 @@ function M.show()
 		if disableNoWrite then
 			noWriteArg = ""
 		end
+
 		vim.fn.termopen("fen " .. noWriteArg .. " --close-on-escape --terminal-title=false --print-path-on-open " .. currentBufName .. " > " .. tempFile, {
 			on_exit = function (_, exitCode, _)
 				vim.cmd("quit")
@@ -71,9 +117,7 @@ function M.show()
 
 				os.remove(tempFile)
 
-				if vim.api.nvim_win_is_valid(win) then
-					vim.api_nvim_win_close(win, true)
-				end
+				close_window()
 			end
 		})
 	end

@@ -3,8 +3,6 @@ local M = {}
 -- Returns the "1.7.18" part of `fen --version`
 function M.fenVersion()
 	local version = vim.fn.system("fen --version")
-	--return version:sub(5, -2) -- "fen v"
-	--return version:sub(6, -2) -- "fen v"
 	return version:sub(6, -2) -- "fen v"
 end
 

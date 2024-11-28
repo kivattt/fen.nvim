@@ -19,6 +19,8 @@ local fen = require("fen")
 fen.setup({
     border = "rounded", -- See: https://neovim.io/doc/user/api.html#:~:text=border%3A
     title = "FEN", -- Terminal title (buffer name)
+    width = 0.8,
+    height = 0.8,
     disable_no_write = false -- Set this to true to allow deleting or modifying files
 })
 ```
