@@ -3,11 +3,11 @@ local M = {}
 local util = require("fen.util")
 
 local border = "rounded"
-local noWrite = true
+local disableNoWrite = true
 
 function M.setup(options)
 	border = options.border or "rounded"
-	noWrite = options.no_write or true
+	disableNoWrite = options.disable_no_write
 end
 
 function M.show()
@@ -45,7 +45,7 @@ function M.show()
 	else
 		vim.cmd.startinsert()
 		local noWriteArg = "--no-write"
-		if not noWrite then
+		if disableNoWrite then
 			noWriteArg = ""
 		end
 		vim.fn.termopen("fen " .. noWriteArg .. " --close-on-escape --terminal-title=false --print-path-on-open " .. currentBufName .. " > " .. tempFile, {

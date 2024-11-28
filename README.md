@@ -13,16 +13,15 @@ local fen = require("fen")
 vim.keymap.set("n", "<Leader>f", fen.show)
 ```
 
-## Configuration: (defaults)
+## Configuration (defaults)
 ```lua
 local fen = require("fen")
 fen.setup({
     border = "rounded", -- See: https://neovim.io/doc/user/api.html#:~:text=border%3A
-    no_write = true -- Prevents deleting or modifying files in fen
+    disable_no_write = false -- Set this to true to allow deleting or modifying files
 })
 ```
 
 ## TODO
 Disable search highlighting for the fen popup window\
-Don't change the terminal title\
-Allow setting no\_write to false, right now it does nothing
+Don't change the terminal title
