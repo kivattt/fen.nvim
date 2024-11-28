@@ -13,7 +13,7 @@ local fen = require("fen")
 vim.keymap.set("n", "<Leader>f", fen.show)
 ```
 
-## Configuration (defaults)
+## Configuration (default values)
 ```lua
 local fen = require("fen")
 fen.setup({
